@@ -1,10 +1,10 @@
 -- ================================================================
--- RepTracker - Data : Wrath of the Lich King (3.x)
+-- RenTracker - Data : Wrath of the Lich King (3.x)
 -- ================================================================
 
-RepTrackerData = RepTrackerData or {}
+RenTrackerData = RenTrackerData or {}
 
-RepTrackerData["WrathOfTheLichKing"] = {
+RenTrackerData["WrathOfTheLichKing"] = {
   label      = "Wrath of the Lich King",
   tocLabel   = "30300",
   system     = "classic",

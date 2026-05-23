@@ -1,10 +1,10 @@
 -- ================================================================
--- RepTracker - Data : Battle for Azeroth (8.x)
+-- RenTracker - Data : Battle for Azeroth (8.x)
 -- ================================================================
 
-RepTrackerData = RepTrackerData or {}
+RenTrackerData = RenTrackerData or {}
 
-RepTrackerData["BattleForAzeroth"] = {
+RenTrackerData["BattleForAzeroth"] = {
   label      = "Battle for Azeroth",
   tocLabel   = "80205",
   system     = "classic",

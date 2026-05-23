@@ -1,10 +1,10 @@
 -- ================================================================
--- RepTracker - Data : World of Warcraft (1.x - Vanilla)
+-- RenTracker - Data : World of Warcraft (1.x - Vanilla)
 -- ================================================================
 
-RepTrackerData = RepTrackerData or {}
+RenTrackerData = RenTrackerData or {}
 
-RepTrackerData["Vanilla"] = {
+RenTrackerData["Vanilla"] = {
   label      = "Classic",
   tocLabel   = "11500",
   system     = "classic",

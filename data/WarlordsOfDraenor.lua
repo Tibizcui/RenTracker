@@ -1,10 +1,10 @@
 -- ================================================================
--- RepTracker - Data : Warlords of Draenor (6.x)
+-- RenTracker - Data : Warlords of Draenor (6.x)
 -- ================================================================
 
-RepTrackerData = RepTrackerData or {}
+RenTrackerData = RenTrackerData or {}
 
-RepTrackerData["WarlordsOfDraenor"] = {
+RenTrackerData["WarlordsOfDraenor"] = {
   label      = "Warlords of Draenor",
   tocLabel   = "60200",
   system     = "classic",

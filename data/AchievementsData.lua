@@ -1,12 +1,12 @@
 -- ================================================================
--- RepTracker - AchievementsData.lua
+-- RenTracker - AchievementsData.lua
 -- Tous les Hauts Faits de réputation, classés par extension
 -- Source : Wowhead / Warcraft Wiki
 -- ================================================================
 
-RepTrackerAchievements = RepTrackerAchievements or {}
+RenTrackerAchievements = RenTrackerAchievements or {}
 
-RepTrackerAchievements = {
+RenTrackerAchievements = {
 
   -- ============================================================
   -- VANILLA (1.x)

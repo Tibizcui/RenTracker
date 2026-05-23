@@ -1,10 +1,10 @@
 -- ================================================================
--- RepTracker - Data : The Burning Crusade (2.x)
+-- RenTracker - Data : The Burning Crusade (2.x)
 -- ================================================================
 
-RepTrackerData = RepTrackerData or {}
+RenTrackerData = RenTrackerData or {}
 
-RepTrackerData["TheBurningCrusade"] = {
+RenTrackerData["TheBurningCrusade"] = {
   label      = "The Burning Crusade",
   tocLabel   = "20400",
   system     = "classic",

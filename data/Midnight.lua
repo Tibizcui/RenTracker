@@ -1,10 +1,10 @@
 -- ================================================================
--- RepTracker - Data : Midnight (12.x)
+-- RenTracker - Data : Midnight (12.x)
 -- ================================================================
 
-RepTrackerData = RepTrackerData or {}
+RenTrackerData = RenTrackerData or {}
 
-RepTrackerData["Midnight"] = {
+RenTrackerData["Midnight"] = {
   label    = "Midnight",
   system     = "renown",
   hasParagon = true,

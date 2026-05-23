@@ -1,10 +1,10 @@
 -- ================================================================
--- RepTracker - Data : The War Within (11.x)
+-- RenTracker - Data : The War Within (11.x)
 -- ================================================================
 
-RepTrackerData = RepTrackerData or {}
+RenTrackerData = RenTrackerData or {}
 
-RepTrackerData["TheWarWithin"] = {
+RenTrackerData["TheWarWithin"] = {
   label    = "The War Within",
   system     = "renown",
   hasParagon = true,

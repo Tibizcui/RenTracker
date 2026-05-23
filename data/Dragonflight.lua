@@ -1,10 +1,10 @@
 -- ================================================================
--- RepTracker - Data : Dragonflight (10.x)
+-- RenTracker - Data : Dragonflight (10.x)
 -- ================================================================
 
-RepTrackerData = RepTrackerData or {}
+RenTrackerData = RenTrackerData or {}
 
-RepTrackerData["Dragonflight"] = {
+RenTrackerData["Dragonflight"] = {
   label      = "Dragonflight",
   tocLabel   = "100207",
   system     = "renown",

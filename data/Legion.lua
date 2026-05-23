@@ -1,10 +1,10 @@
 -- ================================================================
--- RepTracker - Data : Legion (7.x)
+-- RenTracker - Data : Legion (7.x)
 -- ================================================================
 
-RepTrackerData = RepTrackerData or {}
+RenTrackerData = RenTrackerData or {}
 
-RepTrackerData["Legion"] = {
+RenTrackerData["Legion"] = {
   label      = "Legion",
   tocLabel   = "70305",
   system     = "classic",

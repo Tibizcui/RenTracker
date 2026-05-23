@@ -1,10 +1,10 @@
 -- ================================================================
--- RepTracker - Data : Cataclysme (4.x)
+-- RenTracker - Data : Cataclysme (4.x)
 -- ================================================================
 
-RepTrackerData = RepTrackerData or {}
+RenTrackerData = RenTrackerData or {}
 
-RepTrackerData["Cataclysme"] = {
+RenTrackerData["Cataclysme"] = {
   label      = "Cataclysme",
   tocLabel   = "40300",
   system     = "classic",

@@ -1,5 +1,5 @@
 -- ================================================================
--- RepTracker - Data : HF "Tous des malades" - Le grand malade
+-- RenTracker - Data : HF "Tous des malades" - Le grand malade
 -- Achievement ID : 2336
 -- Nom : Tous des malades (Haut fait Le Grand Malade)
 -- ================================================================
@@ -11,9 +11,9 @@
 --              Foire de Sombrelune, Ravenholdt
 -- ================================================================
 
-RepTrackerData = RepTrackerData or {}
+RenTrackerData = RenTrackerData or {}
 
-RepTrackerData["GrandMalade"] = {
+RenTrackerData["GrandMalade"] = {
   label      = "Le Grand Malade",
   tocLabel   = "10000",
   system     = "classic",

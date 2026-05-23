@@ -1,10 +1,10 @@
 -- ================================================================
--- RepTracker - Data : Mists of Pandaria (5.x)
+-- RenTracker - Data : Mists of Pandaria (5.x)
 -- ================================================================
 
-RepTrackerData = RepTrackerData or {}
+RenTrackerData = RenTrackerData or {}
 
-RepTrackerData["MistsOfPandaria"] = {
+RenTrackerData["MistsOfPandaria"] = {
   label      = "Mists of Pandaria",
   tocLabel   = "50500",
   system     = "classic",

@@ -1,10 +1,10 @@
 -- ================================================================
--- RepTracker - Data : Shadowlands (9.x)
+-- RenTracker - Data : Shadowlands (9.x)
 -- ================================================================
 
-RepTrackerData = RepTrackerData or {}
+RenTrackerData = RenTrackerData or {}
 
-RepTrackerData["Shadowlands"] = {
+RenTrackerData["Shadowlands"] = {
   label      = "Shadowlands",
   tocLabel   = "90205",
   system     = "renown",

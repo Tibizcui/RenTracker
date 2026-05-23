@@ -1,13 +1,13 @@
 -- ================================================================
--- RepTracker v3.0
+-- RenTracker v3.0
 -- Suivi des reputations | Toutes les extensions depuis vanilla
 -- Auteur : Tibiscui - Kirin Tor
 -- ================================================================
 
-local ADDON = "RepTracker"
+local ADDON = "RenTracker"
 
--- RepTrackerData est rempli par les fichiers data/
-RepTrackerData = RepTrackerData or {}
+-- RenTrackerData est rempli par les fichiers data/
+RenTrackerData = RenTrackerData or {}
 
 -- ================================================================
 -- VERIFICATION QUETE COMPLETEE
@@ -116,7 +116,7 @@ local FRAME_W = 600
 -- ================================================================
 -- SAUVEGARDE
 -- ================================================================
-RepTrackerDB = RepTrackerDB or {
+RenTrackerDB = RenTrackerDB or {
   pos        = {point="CENTER", x=0, y=0},
   open       = false,
   selectedFac = nil,   -- {cat="principale", name="Cercle Cénarie"}
@@ -199,14 +199,14 @@ local function AutoTrackFactionByZone()
   if not entry then return end
 
   -- Changer l'extension affichee dans l'addon si besoin
-  if RepTrackerDB.extension ~= entry.ext then
-    RepTrackerDB.extension = entry.ext
+  if RenTrackerDB.extension ~= entry.ext then
+    RenTrackerDB.extension = entry.ext
   end
   -- Changer la faction selectionnee dans l'addon
-  RepTrackerDB.selected = entry.fIdx
+  RenTrackerDB.selected = entry.fIdx
 
   -- Mettre a jour la Barre d'etat 1 de WoW
-  local factions = RepTrackerData and RepTrackerData[entry.ext] and RepTrackerData[entry.ext].factions
+  local factions = RenTrackerData and RenTrackerData[entry.ext] and RenTrackerData[entry.ext].factions
   if factions and factions[entry.fIdx] then
     local facID = factions[entry.fIdx].id
     if facID then
@@ -242,9 +242,9 @@ end
 
 -- Retourne les factions de l'extension active
 local function GetActiveFactions()
-  local ext = RepTrackerDB.extension or "Midnight"
-  if RepTrackerData and RepTrackerData[ext] then
-    return RepTrackerData[ext].factions or {}
+  local ext = RenTrackerDB.extension or "Midnight"
+  if RenTrackerData and RenTrackerData[ext] then
+    return RenTrackerData[ext].factions or {}
   end
   return {}
 end
@@ -266,9 +266,9 @@ local GROUP_DEFAULTS = { principale=true, secondaire=true, pvp=false }
 
 -- Retourne les metadonnees de l'extension active
 local function GetActiveExtData()
-  local ext = RepTrackerDB.extension or "Midnight"
-  if RepTrackerData and RepTrackerData[ext] then
-    return RepTrackerData[ext]
+  local ext = RenTrackerDB.extension or "Midnight"
+  if RenTrackerData and RenTrackerData[ext] then
+    return RenTrackerData[ext]
   end
   return {renownCap=20, repPerRank=2500, color={r=0.5,g=0.5,b=0.5}}
 end
@@ -344,7 +344,7 @@ local function GetRenownData(factionId)
       end
     end
     -- Fallback renown
-    local saved = RepTrackerDB.renown[factionId] or 0
+    local saved = RenTrackerDB.renown[factionId] or 0
     local rank  = math.min(math.floor(saved / REP_PER), RENOWN_CAP)
     local cur   = saved % REP_PER
     local col   = GetRenownColor(rank, RENOWN_CAP)
@@ -460,7 +460,7 @@ local mainFrame
 -- COMPTEUR : nombre de réputations max pour une extension
 -- ================================================================
 local function GetExtRepCounts(extKey)
-  local extD = RepTrackerData and RepTrackerData[extKey]
+  local extD = RenTrackerData and RenTrackerData[extKey]
   if not extD or not extD.factions then return 0, 0 end
   local total = #extD.factions
   local done  = 0
@@ -500,12 +500,12 @@ local function BuildUI()
   -- ================================================================
   -- FENETRE PRINCIPALE
   -- ================================================================
-  mainFrame = CreateFrame("Frame", "RTMainFrame", UIParent, "BackdropTemplate")
+  mainFrame = CreateFrame("Frame", "RNTMainFrame", UIParent, "BackdropTemplate")
   mainFrame:SetSize(FRAME_W, FRAME_H_MIN)
   mainFrame:SetClipsChildren(false)
 
   mainFrame:SetScript("OnKeyDown", function(self, key)
-    if key == "ESCAPE" then self:Hide() ; RepTrackerDB.open = false end
+    if key == "ESCAPE" then self:Hide() ; RenTrackerDB.open = false end
   end)
   mainFrame:EnableKeyboard(true)
   mainFrame:SetPropagateKeyboardInput(true)
@@ -517,7 +517,7 @@ local function BuildUI()
   mainFrame:SetScript("OnDragStop", function(s)
     s:StopMovingOrSizing()
     local point, _, _, x, y = s:GetPoint()
-    RepTrackerDB.pos = {point=point, x=x, y=y}
+    RenTrackerDB.pos = {point=point, x=x, y=y}
   end)
 
   mainFrame:SetBackdrop({
@@ -547,10 +547,10 @@ local function BuildUI()
 
   local logoLeft = titleBg:CreateTexture(nil, "OVERLAY")
   logoLeft:SetSize(20, 20)
-  logoLeft:SetTexture("Interface\\AddOns\\RepTracker\\medias\\RepTracker")
+  logoLeft:SetTexture("Interface\\AddOns\\RenTracker\\medias\\RenTracker")
   local logoRight = titleBg:CreateTexture(nil, "OVERLAY")
   logoRight:SetSize(20, 20)
-  logoRight:SetTexture("Interface\\AddOns\\RepTracker\\medias\\RepTracker")
+  logoRight:SetTexture("Interface\\AddOns\\RenTracker\\medias\\RenTracker")
 
   local titleStr = titleBg:CreateFontString(nil, "OVERLAY")
   titleStr:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
@@ -567,7 +567,7 @@ local function BuildUI()
   local closeBtn = CreateFrame("Button", nil, mainFrame, "UIPanelCloseButton")
   closeBtn:SetPoint("TOPRIGHT", -5, -5)
   closeBtn:SetScript("OnClick", function()
-    mainFrame:Hide() ; RepTrackerDB.open = false
+    mainFrame:Hide() ; RenTrackerDB.open = false
   end)
 
 
@@ -649,15 +649,15 @@ local function BuildUI()
     eb.col     = col
 
     eb:SetScript("OnClick", function()
-      RepTrackerDB.extension = extKey
-      RepTrackerDB.selectedFac = nil
+      RenTrackerDB.extension = extKey
+      RenTrackerDB.selectedFac = nil
       
       mainFrame:RefreshContent()
     end)
     eb:SetScript("OnEnter", function(s)
       GameTooltip:SetOwner(s, "ANCHOR_RIGHT")
       GameTooltip:AddLine(fullName, col.r, col.g, col.b)
-      local extD = RepTrackerData and RepTrackerData[extKey]
+      local extD = RenTrackerData and RenTrackerData[extKey]
       if extD then
         local nbFac = extD.factions and #extD.factions or 0
         local sys   = extD.system == "renown" and "Système Renown" or "Système Classique"
@@ -728,15 +728,15 @@ local function BuildUI()
     eb.col     = col
 
     eb:SetScript("OnClick", function()
-      RepTrackerDB.extension = extKey
-      RepTrackerDB.selectedFac = nil
+      RenTrackerDB.extension = extKey
+      RenTrackerDB.selectedFac = nil
       
       mainFrame:RefreshContent()
     end)
     eb:SetScript("OnEnter", function(s)
       GameTooltip:SetOwner(s, "ANCHOR_RIGHT")
       GameTooltip:AddLine(fullName, col.r, col.g, col.b)
-      local extD = RepTrackerData and RepTrackerData[extKey]
+      local extD = RenTrackerData and RenTrackerData[extKey]
       if extD then
         local nbFac = extD.factions and #extD.factions or 0
         local sys   = extD.system == "renown" and "Système Renown" or "Système Classique"
@@ -818,15 +818,15 @@ local function BuildUI()
     eb.col     = col
 
     eb:SetScript("OnClick", function()
-      RepTrackerDB.extension = extKey
-      RepTrackerDB.selectedFac = nil
+      RenTrackerDB.extension = extKey
+      RenTrackerDB.selectedFac = nil
       
       mainFrame:RefreshContent()
     end)
     eb:SetScript("OnEnter", function(s)
       GameTooltip:SetOwner(s, "ANCHOR_RIGHT")
       GameTooltip:AddLine(fullName, col.r, col.g, col.b)
-      local extD = RepTrackerData and RepTrackerData[extKey]
+      local extD = RenTrackerData and RenTrackerData[extKey]
       if extD then
         local nbFac = extD.factions and #extD.factions or 0
         local sys   = extD.system == "renown" and "Système Renown" or "Système Classique"
@@ -940,12 +940,12 @@ local function BuildUI()
 
   -- Sélection courante : {cat, name}
   local function GetSelectedFac()
-    local sf = RepTrackerDB.selectedFac
+    local sf = RenTrackerDB.selectedFac
     if not sf then return nil, nil end
     return sf.cat, sf.name
   end
   local function SetSelectedFac(cat, name)
-    RepTrackerDB.selectedFac = {cat=cat, name=name}
+    RenTrackerDB.selectedFac = {cat=cat, name=name}
   end
 
   -- ================================================================
@@ -956,8 +956,8 @@ local function BuildUI()
     for _, f in ipairs(mainFrame.groupFrames) do f:Hide() end
     mainFrame.groupFrames = {}
 
-    if not RepTrackerDB.groups then
-      RepTrackerDB.groups = {principale=true, secondaire=true, pvp=false}
+    if not RenTrackerDB.groups then
+      RenTrackerDB.groups = {principale=true, secondaire=true, pvp=false}
     end
 
     local selCat, selName = GetSelectedFac()
@@ -967,7 +967,7 @@ local function BuildUI()
       local cat     = cd.key
       local factions = GetFactionsByCategory(cat)
       local nbFac   = #factions
-      local isOpen  = RepTrackerDB.groups[cat]
+      local isOpen  = RenTrackerDB.groups[cat]
       if isOpen == nil then isOpen = GROUP_DEFAULTS[cat] end
 
       local col = cd.col
@@ -1007,7 +1007,7 @@ local function BuildUI()
       ghBadge:SetText(string.format("|cFF%02X%02X%02X%d|r", r8, g8, b8, nbFac))
 
       gh:SetScript("OnClick", function()
-        RepTrackerDB.groups[cat] = not RepTrackerDB.groups[cat]
+        RenTrackerDB.groups[cat] = not RenTrackerDB.groups[cat]
         mainFrame:RefreshContent()
       end)
       gh:SetScript("OnEnter", function(s)
@@ -1226,7 +1226,7 @@ local function BuildUI()
   -- HELPER : détecte si toutes les factions d'une extension sont max
   -- ================================================================
   local function IsExtensionMaxed(extKey)
-    local extD = RepTrackerData and RepTrackerData[extKey]
+    local extD = RenTrackerData and RenTrackerData[extKey]
     if not extD or not extD.factions or #extD.factions == 0 then return false end
     for _, fac in ipairs(extD.factions) do
       if not fac.id then return false end
@@ -1257,8 +1257,8 @@ local function BuildUI()
   mainFrame.RefreshContent = function(self)
 
     -- Mise a jour du label extension active
-    local extKey  = RepTrackerDB.extension or "Midnight"
-    local extD    = RepTrackerData and RepTrackerData[extKey]
+    local extKey  = RenTrackerDB.extension or "Midnight"
+    local extD    = RenTrackerData and RenTrackerData[extKey]
     local extCol  = EXT_TAB_COLORS[extKey] or {r=1,g=0.84,b=0}
     local extFull = EXT_FULLNAMES[extKey] or extKey
     self.extActiveLabel:SetText(string.format(
@@ -1269,7 +1269,7 @@ local function BuildUI()
     -- Highlight extension active + compteurs
     for _, eb in ipairs(self.extBtns or {}) do
       local col = eb.col or {r=0.5,g=0.5,b=0.5}
-      if eb.extKey == RepTrackerDB.extension then
+      if eb.extKey == RenTrackerDB.extension then
         eb:SetBackdropColor(col.r*0.40, col.g*0.40, col.b*0.40, 1.0)
         eb:SetBackdropBorderColor(col.r, col.g, col.b, 1.0)
         if eb.accent then eb.accent:SetVertexColor(col.r, col.g, col.b, 1.0) end
@@ -1430,8 +1430,8 @@ local function BuildUI()
     for _, c in pairs({self.questContent:GetChildren()})  do c:Hide() end
     for _, r in pairs({self.questContent:GetRegions()})   do r:Hide() end
 
-    if not RepTrackerDB.sections then
-      RepTrackerDB.sections = {weekly=false, onetime=false, daily=false}
+    if not RenTrackerDB.sections then
+      RenTrackerDB.sections = {weekly=false, onetime=false, daily=false}
     end
 
     local groups = {
@@ -1641,7 +1641,7 @@ local function BuildUI()
 
     for _, grp in ipairs(groups) do
       if #grp.quests > 0 then
-        local isOpen = RepTrackerDB.sections[grp.key]
+        local isOpen = RenTrackerDB.sections[grp.key]
         local tc     = TYPE_COLORS[grp.key] or {r=1,g=1,b=1}
 
         -- En-tete de groupe (accordeon)
@@ -1680,7 +1680,7 @@ local function BuildUI()
         end
 
         header:SetScript("OnClick", function()
-          RepTrackerDB.sections[grp.key] = not RepTrackerDB.sections[grp.key]
+          RenTrackerDB.sections[grp.key] = not RenTrackerDB.sections[grp.key]
           mainFrame:RefreshContent()
         end)
 
@@ -1746,7 +1746,7 @@ end
 local function SetMinimapPos(angle)
   -- Normalise l'angle entre 0 et 360
   angle = angle % 360
-  if RepTrackerDB then RepTrackerDB.mmAngle = angle end
+  if RenTrackerDB then RenTrackerDB.mmAngle = angle end
   local r   = GetMinimapRadius()
   local rad = math.rad(angle)
   minimapBtn:ClearAllPoints()
@@ -1761,7 +1761,7 @@ local function BuildMinimapButton()
   -- ── Cadre principal ────────────────────────────────────────────
   -- Bouton 32×32, parent = Minimap (ancrage orbital)
   -- Structure conforme à DBIcon et aux boutons Blizzard natifs
-  minimapBtn = CreateFrame("Button", "RTMinimapBtn", Minimap)
+  minimapBtn = CreateFrame("Button", "RNTMinimapBtn", Minimap)
   minimapBtn:SetSize(32, 32)
   minimapBtn:SetFrameStrata("MEDIUM")
   minimapBtn:SetFrameLevel(8)
@@ -1776,7 +1776,7 @@ local function BuildMinimapButton()
   local icon = minimapBtn:CreateTexture(nil, "ARTWORK")
   icon:SetPoint("CENTER", minimapBtn, "CENTER", 0, 0)
   icon:SetSize(24, 24)
-  icon:SetTexture("Interface\\AddOns\\RepTracker\\medias\\RepTracker")
+  icon:SetTexture("Interface\\AddOns\\RenTracker\\medias\\RenTracker")
   -- Mask circulaire Blizzard : coupe les 4 coins de l\'icône carrée
   local mask = minimapBtn:CreateMaskTexture()
   mask:SetAllPoints(icon)
@@ -1811,12 +1811,12 @@ local function BuildMinimapButton()
 
   -- ── Position initiale ──────────────────────────────────────────
   -- Restaurée depuis la DB (220° = bas-gauche par défaut, comme DBIcon)
-  local savedAngle = (RepTrackerDB and RepTrackerDB.mmAngle) or 220
+  local savedAngle = (RenTrackerDB and RenTrackerDB.mmAngle) or 220
   SetMinimapPos(savedAngle)
 
   -- Repositionne si la minimap change de taille (ElvUI, Dominos, etc.)
   minimapBtn:SetScript("OnShow", function()
-    SetMinimapPos((RepTrackerDB and RepTrackerDB.mmAngle) or 220)
+    SetMinimapPos((RenTrackerDB and RenTrackerDB.mmAngle) or 220)
   end)
 
   -- ── Drag orbital ───────────────────────────────────────────────
@@ -1850,7 +1850,7 @@ local function BuildMinimapButton()
   local resizeWatcher = CreateFrame("Frame")
   resizeWatcher:RegisterEvent("MINIMAP_UPDATE_ZOOM")
   resizeWatcher:SetScript("OnEvent", function()
-    SetMinimapPos((RepTrackerDB and RepTrackerDB.mmAngle) or 220)
+    SetMinimapPos((RenTrackerDB and RenTrackerDB.mmAngle) or 220)
   end)
 
   -- ── Clic : ouvrir / fermer la fenêtre principale ───────────────
@@ -1858,11 +1858,11 @@ local function BuildMinimapButton()
     if button == "LeftButton" then
       if mainFrame:IsShown() then
         mainFrame:Hide()
-        RepTrackerDB.open = false
+        RenTrackerDB.open = false
       else
         mainFrame:Show()
         mainFrame:RefreshContent()
-        RepTrackerDB.open = true
+        RenTrackerDB.open = true
       end
     end
   end)
@@ -1870,7 +1870,7 @@ local function BuildMinimapButton()
   minimapBtn:SetScript("OnEnter", function(s)
     if s._hl then s._hl:SetAlpha(1) end
     GameTooltip:SetOwner(s, "ANCHOR_LEFT")
-    GameTooltip:AddLine("|cFFcc9933RepTracker|r", 0.45, 0.70, 1.0)
+    GameTooltip:AddLine("RenTracker", 0.45, 0.70, 1.0)
     GameTooltip:AddLine("Suivi des réputations", 0.9, 0.9, 0.9)
     GameTooltip:AddLine(" ", 1, 1, 1)
     GameTooltip:AddLine("|cFFFFD700Clic gauche|r : ouvrir / fermer", 0.7, 0.7, 0.7)
@@ -1888,43 +1888,43 @@ end
 -- Ces 3 fonctions sont déclarées en global pour correspondre aux
 -- entrées ## AddonCompartmentFunc* du .toc
 -- ================================================================
-function RepTracker_OnAddonCompartmentClick()
+function RenTracker_OnAddonCompartmentClick()
   if mainFrame:IsShown() then
     mainFrame:Hide()
-    RepTrackerDB.open = false
+    RenTrackerDB.open = false
   else
     mainFrame:Show()
     mainFrame:RefreshContent()
-    RepTrackerDB.open = true
+    RenTrackerDB.open = true
   end
 end
 
-function RepTracker_OnAddonCompartmentEnter(btn)
+function RenTracker_OnAddonCompartmentEnter(btn)
   GameTooltip:SetOwner(btn, "ANCHOR_LEFT")
-  GameTooltip:AddLine("RepTracker", 0.45, 0.70, 1.0)
+  GameTooltip:AddLine("RenTracker", 0.45, 0.70, 1.0)
   GameTooltip:AddLine("Suivi des réputations", 0.9, 0.9, 0.9)
   GameTooltip:AddLine(" ")
   GameTooltip:AddLine("|cFFFFD700Clic|r : ouvrir / fermer", 0.7, 0.7, 0.7)
   GameTooltip:Show()
 end
 
-function RepTracker_OnAddonCompartmentLeave()
+function RenTracker_OnAddonCompartmentLeave()
   GameTooltip:Hide()
 end
 
 -- ================================================================
 -- COMMANDES SLASH
 -- ================================================================
-SLASH_REPTRACKER1 = "/trt"
-SLASH_REPTRACKER2 = "/tibirep"
-SlashCmdList["REPTRACKER"] = function()
+SLASH_RENTRACKER1 = "/trt"
+SLASH_RENTRACKER2 = "/tibirep"
+SlashCmdList["RENTRACKER"] = function()
   if mainFrame:IsShown() then
     mainFrame:Hide()
-    RepTrackerDB.open = false
+    RenTrackerDB.open = false
   else
     mainFrame:Show()
     mainFrame:RefreshContent()
-    RepTrackerDB.open = true
+    RenTrackerDB.open = true
   end
 end
 
@@ -1950,7 +1950,7 @@ evFrame:SetScript("OnEvent", function(_, event, arg1)
     BuildMinimapButton()
 
     -- Restaurer position fenetre
-    local p = RepTrackerDB.pos
+    local p = RenTrackerDB.pos
     if p and p.x then
       mainFrame:ClearAllPoints()
       mainFrame:SetPoint(p.point or "CENTER", UIParent, p.point or "CENTER", p.x, p.y)
@@ -1960,13 +1960,13 @@ evFrame:SetScript("OnEvent", function(_, event, arg1)
 
     -- (redimensionnement manuel supprime en v3.4)
 
-    if RepTrackerDB.open then
+    if RenTrackerDB.open then
       mainFrame:Show()
       if mainFrame.RefreshContent then mainFrame:RefreshContent() end
     end
 
   elseif event == "PLAYER_LOGIN" then
-    print("|cFF4D99FFRepTracker|r v3.0 chargé -- tapez |cFFFFD700/trt|r pour ouvrir.")
+    print("|cFF4D99FFRenTracker|r v3.0 chargé -- tapez |cFFFFD700/trt|r pour ouvrir.")
     -- Suivi auto au login
     C_Timer.After(2, AutoTrackFactionByZone)
 
