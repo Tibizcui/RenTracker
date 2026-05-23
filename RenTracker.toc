@@ -12,8 +12,8 @@
 ## AddonCompartmentFuncOnEnter: RenTracker_OnAddonCompartmentEnter
 ## AddonCompartmentFuncOnLeave: RenTracker_OnAddonCompartmentLeave
 
-## Category: Reputations
-## Category-frFR: Reputations
+## Category: Tracking
+## Category-frFR: Tracking
 
 # ----------------------------------------------------------------
 # ICONE MINIMAP - Specs et regles Blizzard
