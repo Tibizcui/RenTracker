@@ -1,10 +1,10 @@
-# TibiRepTracker
+# Ren Tracker
 Tracker Reputation's of World Of Warcraft
 
-TibiRepTracker – Master Your Midnight Reputations
+Ren Tracker – Master Your Midnight Reputations
 Overview
 
-Take full control of your Midnight reputation grind with TibiRepTracker, a clean and efficient addon for World of Warcraft.
+Take full control of your Midnight reputation grind with Ren Tracker, a clean and efficient addon for World of Warcraft.
 
 No more confusion, no more missed quests — everything you need is clearly organized in one place.
 
@@ -33,7 +33,7 @@ Why You’ll Love It
 
 Grinding reputations shouldn’t feel like guesswork.
 
-With TibiRepTracker, you:
+With Ren Tracker, you:
 
 Stay organized effortlessly
 Instantly see what’s done and what remains
@@ -61,7 +61,7 @@ Version Française
 ---------- ---------- -------- ---------- ---------- -------- ---------- ---------- --------
 Présentation
 
-Prenez le contrôle total de votre progression de réputations Midnight avec TibiRepTracker, un addon clair, efficace et immersif pour World of Warcraft.
+Prenez le contrôle total de votre progression de réputations Midnight avec Ren Tracker, un addon clair, efficace et immersif pour World of Warcraft.
 
 Fini les oublis et le suivi approximatif : tout est centralisé et lisible en un coup d’œil.
 
@@ -84,11 +84,11 @@ Intégration fluide avec l’interface Blizzard
 Fenêtre déplaçable
 Adaptez l’addon à votre interface
 ---------- ---------- --------
-Pourquoi utiliser TibiRepTracker ?
+Pourquoi utiliser Ren Tracker ?
 
 Le suivi des réputations peut vite devenir complexe.
 
-Avec TibiRepTracker :
+Avec Ren Tracker :
 
 Vous voyez instantanément ce qui est fait ou non
 Vous naviguez directement vers les quêtes

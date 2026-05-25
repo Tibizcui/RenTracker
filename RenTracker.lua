@@ -555,7 +555,7 @@ local function BuildUI()
   local titleStr = titleBg:CreateFontString(nil, "OVERLAY")
   titleStr:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
   titleStr:SetPoint("CENTER", titleBg, "CENTER", 0, 5)
-  titleStr:SetText("|cFFFFD700Tibi Rep Tracker - |r|cFF9480FFMidnight|r")
+  titleStr:SetText("|cFFFFD700Ren Tracker - |r|cFF9480FFMidnight|r")
   logoLeft:SetPoint("RIGHT", titleStr, "LEFT", -6, 0)
   logoRight:SetPoint("LEFT",  titleStr, "RIGHT", 6, 0)
 
@@ -1913,6 +1913,21 @@ function RenTracker_OnAddonCompartmentLeave()
 end
 
 -- ================================================================
+-- TIBISUITE INTEGRATION
+-- Fonction publique appelée par TibiSuite pour ouvrir/fermer la fenêtre.
+-- ================================================================
+function RenTracker_Toggle()
+  if mainFrame:IsShown() then
+    mainFrame:Hide()
+    RenTrackerDB.open = false
+  else
+    mainFrame:Show()
+    mainFrame:RefreshContent()
+    RenTrackerDB.open = true
+  end
+end
+
+-- ================================================================
 -- COMMANDES SLASH
 -- ================================================================
 SLASH_RENTRACKER1 = "/trt"
@@ -1944,7 +1959,12 @@ evFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
 
 evFrame:SetScript("OnEvent", function(_, event, arg1)
 
-  if event == "ADDON_LOADED" and arg1 == ADDON then
+  if event == "ADDON_LOADED" and arg1 == "TibiSuite" then
+    -- TibiSuite est actif : on masque le bouton minimap individuel
+    local btn = _G["RNTMinimapBtn"]
+    if btn and btn.Hide then btn:Hide() end
+
+  elseif event == "ADDON_LOADED" and arg1 == ADDON then
 
     BuildUI()
     BuildMinimapButton()
