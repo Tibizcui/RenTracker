@@ -1980,7 +1980,10 @@ evFrame:SetScript("OnEvent", function(_, event, arg1)
 
     -- (redimensionnement manuel supprime en v3.4)
 
-    RenTrackerDB.open = false  -- ferme automatiquement au login
+    if RenTrackerDB.open then
+      mainFrame:Show()
+      if mainFrame.RefreshContent then mainFrame:RefreshContent() end
+    end
 
   elseif event == "PLAYER_LOGIN" then
     print("|cFF4D99FFRenTracker|r v3.0 chargé -- tapez |cFFFFD700/trt|r pour ouvrir.")
