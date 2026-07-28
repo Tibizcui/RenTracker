@@ -8,7 +8,7 @@ RenTrackerData["Midnight"] = {
   label    = "Midnight",
   system     = "renown",
   hasParagon = true,
-  tocLabel = "120005",
+  tocLabel = "120007",
   renownCap = 20,
   repPerRank = 2500,
   color    = {r=0.58, g=0.30, b=0.95},
