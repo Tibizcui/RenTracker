@@ -2,7 +2,7 @@
 
 **Multi-expansion reputation tracker for World of Warcraft — from Vanilla to Midnight.**
 
-> Author: **Tibiscui - Kirin Tor** | Version: **3.0** | Slash commands: `/trt` · `/tibirep`
+> Author: **Tibiscui - Kirin Tor** | Version: **3.0** | Slash command: `/rt`
 
 ---
 
@@ -70,8 +70,8 @@ The main window can be dragged anywhere on screen to fit your UI layout. Its pos
 
 | Command | Action |
 |---|---|
-| `/trt` | Toggle Ren Tracker open/closed |
-| `/tibirep` | Toggle Ren Tracker open/closed |
+| `/rt` | Toggle Ren Tracker open/closed |
+| `/rt config` | Open the options panel |
 
 ---
 
@@ -88,7 +88,7 @@ The main window can be dragged anywhere on screen to fit your UI layout. Its pos
 
 **Suivi des réputations multi-extensions pour World of Warcraft — de Vanilla à Midnight.**
 
-> Auteur : **Tibiscui - Kirin Tor** | Version : **3.0** | Commandes slash : `/trt` · `/tibirep`
+> Auteur : **Tibiscui - Kirin Tor** | Version : **3.0** | Commande slash : `/rt`
 
 ---
 
@@ -156,8 +156,8 @@ La fenêtre principale peut être placée n'importe où à l'écran. Sa position
 
 | Commande | Action |
 |---|---|
-| `/trt` | Ouvre / ferme Ren Tracker |
-| `/tibirep` | Ouvre / ferme Ren Tracker |
+| `/rt` | Ouvre / ferme Ren Tracker |
+| `/rt config` | Ouvre le panneau d'options |
 
 ---
 

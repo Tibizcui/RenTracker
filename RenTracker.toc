@@ -49,5 +49,8 @@ data\TheBurningCrusade.lua
 data\Vanilla.lua
 data\GrandMalade.lua
 
+## Donnees des hauts faits de reputation
+data\AchievementsData.lua
+
 ## Interface principale
 RenTracker.lua

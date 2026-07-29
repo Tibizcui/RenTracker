@@ -9,56 +9,69 @@ local ADDON = "RenTracker"
 -- RenTrackerData est rempli par les fichiers data/
 RenTrackerData = RenTrackerData or {}
 
+-- Frame principale : declaree tot pour etre capturee comme upvalue par
+-- toutes les fonctions definies plus bas (ex : AutoTrackFactionByZone).
+local mainFrame
+
 -- ================================================================
--- VERIFICATION QUETE COMPLETEE
+-- RAFRAICHISSEMENT GROUPE (debounce)
+-- Regroupe les refresh declenches en rafale (UPDATE_FACTION,
+-- QUEST_LOG_UPDATE...) en un seul appel pour eviter les micro-freezes.
 -- ================================================================
-local function IsQuestDone(questID)
-  if not questID then return false end
-  return C_QuestLog.IsQuestFlaggedCompleted(questID) == true
+local refreshPending = false
+local function ScheduleRefresh()
+  if refreshPending then return end
+  refreshPending = true
+  C_Timer.After(0.15, function()
+    refreshPending = false
+    if mainFrame and mainFrame:IsShown() and mainFrame.RefreshContent then
+      mainFrame:RefreshContent()
+    end
+  end)
 end
 
-
 -- ================================================================
--- HAUT FAIT : TOUS DES MALADES (ID 2336)
--- Retourne le statut de l'achievement sur le compte
+-- HAUT FAIT : statut de completion (sur le compte)
+-- Retourne true si le haut fait est complete.
 -- ================================================================
+local function IsAchievementDone(achID)
+  if not achID then return false end
+  if GetAchievementInfo then
+    local _, _, _, completed = GetAchievementInfo(achID)
+    return completed == true
+  end
+  return false
+end
 
 
 -- ================================================================
 -- COULEURS RENOWN (style qualite d'objet WoW)
 -- Adaptatif selon le renownCap de l'extension
 -- ================================================================
-local function GetRenownColor(rank, cap)
+-- Grille unique : couleur ET label partagent exactement les memes seuils,
+-- pour eviter tout desaccord (barre d'une couleur / texte d'un autre rang).
+local function GetRenownTier(rank, cap)
   cap = cap or 20
+  if rank >= cap then
+    return {r=1.00, g=0.50, b=0.00}, "Exalté"   -- Orange
+  end
   local pct = rank / cap
-  if pct >= 0.85 then return {r=1.00, g=0.50, b=0.00} end  -- Orange  (Exalte)
-  if pct >= 0.65 then return {r=0.65, g=0.30, b=1.00} end  -- Violet  (Revere)
-  if pct >= 0.45 then return {r=0.30, g=0.60, b=1.00} end  -- Bleu    (Honore)
-  if pct >= 0.25 then return {r=0.30, g=0.85, b=0.30} end  -- Vert    (Aimable)
-  return              {r=1.00, g=1.00, b=1.00}             -- Blanc   (Neutre)
+  if pct >= 0.85 then return {r=0.65, g=0.30, b=1.00}, "Révéré"   end  -- Violet
+  if pct >= 0.65 then return {r=0.30, g=0.60, b=1.00}, "Honoré"   end  -- Bleu
+  if pct >= 0.45 then return {r=0.30, g=0.85, b=0.30}, "Aimable"  end  -- Vert
+  if pct >= 0.25 then return {r=0.55, g=0.85, b=0.55}, "Familier" end  -- Vert clair
+  return              {r=1.00, g=1.00, b=1.00}, "Neutre"              -- Blanc
+end
+
+local function GetRenownColor(rank, cap)
+  local col = GetRenownTier(rank, cap)
+  return col
 end
 
 local function GetRenownLabel(rank, cap)
-  cap = cap or 20
-  local pct = rank / cap
-  if rank >= cap   then return "Exalté" end
-  if pct >= 0.85   then return "Révéré" end
-  if pct >= 0.65   then return "Honoré" end
-  if pct >= 0.45   then return "Aimable" end
-  if pct >= 0.25   then return "Familier" end
-  return "Neutre"
+  local _, lbl = GetRenownTier(rank, cap)
+  return lbl
 end
-
-local TYPE_COLORS = {
-  weekly  = {r=0.30, g=0.60, b=1.00},
-  onetime = {r=1.00, g=0.82, b=0.00},
-  daily   = {r=0.30, g=0.85, b=0.30},
-}
-local TYPE_LABELS = {
-  weekly  = "[Hebdo]",
-  onetime = "[Unique]",
-  daily   = "[Quotidien]",
-}
 
 -- Ordre d'affichage des extensions (du plus recent au plus ancien)
 local EXT_ROW1  = { "Midnight","TheWarWithin","Dragonflight","Shadowlands","BattleForAzeroth","Legion" }
@@ -125,7 +138,21 @@ RenTrackerDB = RenTrackerDB or {
   mmAngle    = 220,
   sections   = {weekly=false, onetime=false, daily=false},
   groups     = {principale=true, secondaire=true, pvp=false},
+  options    = {autoTrack=true, loginMsg=true, sound=false},
 }
+
+-- Normalise la DB : garantit que les sous-tables et options existent
+-- meme pour les profils sauvegardes avant l'ajout de ces champs.
+local OPTION_DEFAULTS = { autoTrack=true, loginMsg=true, sound=false }
+local function EnsureDB()
+  RenTrackerDB.renown   = RenTrackerDB.renown   or {}
+  RenTrackerDB.sections = RenTrackerDB.sections or {weekly=false, onetime=false, daily=false}
+  RenTrackerDB.groups   = RenTrackerDB.groups   or {principale=true, secondaire=true, pvp=false}
+  RenTrackerDB.options  = RenTrackerDB.options  or {}
+  for k, v in pairs(OPTION_DEFAULTS) do
+    if RenTrackerDB.options[k] == nil then RenTrackerDB.options[k] = v end
+  end
+end
 
 -- ================================================================
 -- SUIVI AUTO DE REPUTATION PAR ZONE
@@ -192,6 +219,8 @@ local ZONE_FACTION_MAP = {
 }
 
 local function AutoTrackFactionByZone()
+  -- Respecte l'option d'auto-suivi (desactivable dans le panneau d'options)
+  if RenTrackerDB.options and RenTrackerDB.options.autoTrack == false then return end
   if not C_Map then return end
   local mapID = C_Map.GetBestMapForUnit("player")
   if not mapID then return end
@@ -202,11 +231,16 @@ local function AutoTrackFactionByZone()
   if RenTrackerDB.extension ~= entry.ext then
     RenTrackerDB.extension = entry.ext
   end
-  -- Changer la faction selectionnee dans l'addon
-  RenTrackerDB.selected = entry.fIdx
 
   -- Mettre a jour la Barre d'etat 1 de WoW
   local factions = RenTrackerData and RenTrackerData[entry.ext] and RenTrackerData[entry.ext].factions
+
+  -- Selectionner REELLEMENT la faction dans l'addon (cle selectedFac).
+  -- On convertit l'index fIdx en {cat, name} attendu par l'interface.
+  if factions and factions[entry.fIdx] then
+    local f = factions[entry.fIdx]
+    RenTrackerDB.selectedFac = { cat = f.category or "secondaire", name = f.name }
+  end
   if factions and factions[entry.fIdx] then
     local facID = factions[entry.fIdx].id
     if facID then
@@ -452,8 +486,8 @@ end
 
 -- ================================================================
 -- CONSTRUCTION DE L'INTERFACE
+-- (mainFrame est declaree tout en haut du fichier)
 -- ================================================================
-local mainFrame
 
 
 -- ================================================================
@@ -570,10 +604,19 @@ local function BuildUI()
     mainFrame:Hide() ; RenTrackerDB.open = false
   end)
 
+  -- Bouton Options (ouvre le panneau de reglages)
+  local optBtn = CreateFrame("Button", nil, mainFrame, "UIPanelButtonTemplate")
+  optBtn:SetSize(70, 18)
+  optBtn:SetText("Options")
+  optBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", -2, -4)
+  optBtn:SetScript("OnClick", function()
+    if RenTracker_ToggleOptions then RenTracker_ToggleOptions() end
+  end)
+
 
   local drag = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
   drag:SetPoint("TOP", 0, -30)
-  drag:SetText("|cFF888888Glisser pour deplacer  -  /trt  ou  /tibirep|r")
+  drag:SetText("|cFF888888Glisser pour deplacer  -  /rt|r")
 
 
   -- Separateur haut (sous titre)
@@ -608,77 +651,11 @@ local function BuildUI()
   local extTabStartY = -58  -- Y du 1er onglet (remonté car label supprimé)
 
   local MODERN_COUNT = #EXT_ROW1   -- 6
-  local sepDivY = extTabStartY - (MODERN_COUNT * (TAB_H + TAB_GAP)) - 4
-
-  local function BuildExtTab(extKey, idx)
-    local col      = EXT_TAB_COLORS[extKey] or {r=0.5,g=0.5,b=0.5}
-    local lbl      = EXT_LABELS[extKey]    or extKey
-    local fullName = EXT_FULLNAMES[extKey] or extKey
-    local yOff     = extTabStartY - (idx - 1) * (TAB_H + TAB_GAP)
-
-    local eb = CreateFrame("Button", nil, mainFrame, "BackdropTemplate")
-    eb:SetPoint("TOPLEFT", 14, yOff)
-    eb:SetSize(TAB_COL_W - 4, TAB_H)
-    eb:SetBackdrop({
-      bgFile   = "Interface\\ChatFrame\\ChatFrameBackground",
-      edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-      tile=true, tileSize=8, edgeSize=6,
-      insets={left=2,right=2,top=2,bottom=2},
-    })
-    eb:SetBackdropColor(col.r*0.12, col.g*0.12, col.b*0.12, 0.95)
-    eb:SetBackdropBorderColor(col.r*0.35, col.g*0.35, col.b*0.35, 0.5)
-
-    -- Barre d'accent sur le COTE GAUCHE de l'onglet
-    local accent = eb:CreateTexture(nil, "OVERLAY")
-    accent:SetPoint("TOPLEFT",    eb, "TOPLEFT",  2, -2)
-    accent:SetPoint("BOTTOMLEFT", eb, "BOTTOMLEFT", 2, 2)
-    accent:SetWidth(3)
-    accent:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-    accent:SetVertexColor(col.r, col.g, col.b, 0.5)
-
-    local eTxt = eb:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    eTxt:SetPoint("CENTER", 2, 0)
-    eTxt:SetSize(TAB_COL_W - 14, TAB_H - 4)
-    eTxt:SetText(string.format("|cFF%02X%02X%02X%s|r",
-      math.floor(col.r*255), math.floor(col.g*255), math.floor(col.b*255), lbl))
-    eTxt:SetWordWrap(false)
-    eTxt:SetJustifyH("CENTER")
-
-    eb.accent  = accent
-    eb.extKey  = extKey
-    eb.col     = col
-
-    eb:SetScript("OnClick", function()
-      RenTrackerDB.extension = extKey
-      RenTrackerDB.selectedFac = nil
-      
-      mainFrame:RefreshContent()
-    end)
-    eb:SetScript("OnEnter", function(s)
-      GameTooltip:SetOwner(s, "ANCHOR_RIGHT")
-      GameTooltip:AddLine(fullName, col.r, col.g, col.b)
-      local extD = RenTrackerData and RenTrackerData[extKey]
-      if extD then
-        local nbFac = extD.factions and #extD.factions or 0
-        local sys   = extD.system == "renown" and "Système Renown" or "Système Classique"
-        local pg    = extD.hasParagon and "|cFFFFD700Paragon actif|r" or "|cFF888888Sans Paragon|r"
-        GameTooltip:AddLine(nbFac.." faction"..(nbFac>1 and "s" or "").." · "..sys, 0.75, 0.75, 0.75)
-        GameTooltip:AddLine(pg)
-      end
-      GameTooltip:Show()
-    end)
-    eb:SetScript("OnLeave", function() GameTooltip:Hide() end)
-
-    table.insert(extBtns, eb)
-    return eb
-  end
 
   -- Construire les onglets (MID=idx1 en haut, VAN=idx12 en bas)
   -- Mais attention : on insere le separateur apres les 6 modernes
   -- Les 6 modernes : indices 1-6 du tableau EXT_ORDER (EXT_ROW1)
   -- Les 6 classiques : indices 7-12 (EXT_ROW2) avec offset +separateur
-
-  local SEP_H = 22  -- hauteur reservee pour le separateur + label
 
   local function BuildExtTab2(extKey, visualIdx)
     local col      = EXT_TAB_COLORS[extKey] or {r=0.5,g=0.5,b=0.5}
@@ -720,8 +697,8 @@ local function BuildUI()
     cntLbl:SetText("")
     eb.cntLbl = cntLbl
 
-    -- Etoile (gardée pour IsExtensionMaxed)
-    extStars[extKey] = cntLbl  -- on réutilise la table pour déclencher l'update
+    -- Table conservee pour declencher la mise a jour des compteurs par onglet
+    extStars[extKey] = cntLbl
 
     eb.accent  = accent
     eb.extKey  = extKey
@@ -767,10 +744,8 @@ local function BuildUI()
   sepDiv1:SetHeight(2)
   sepDiv1:SetVertexColor(0.72, 0.60, 0.28, 1.0)
 
-  -- Rangee classiques (7-12) : positions visuelles decalees de SEP_H
-  local classicStartVisual = MODERN_COUNT + 1
-  -- On recalcule le Y de depart des classiques en tenant compte du label
-  local classicYBase = divOffsetY - 5  -- collé juste sous le séparateur
+  -- Rangee classiques (7-12) : positions calees juste sous le separateur
+  local classicYBase = divOffsetY - 5
 
   for i, extKey in ipairs(EXT_ROW2) do
     local yOff = classicYBase - (i - 1) * (TAB_H + TAB_GAP)
@@ -871,9 +846,16 @@ local function BuildUI()
   -- Label "Extensions" (nom de l'ext active, sera mis a jour)
   mainFrame.extActiveLabel = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   mainFrame.extActiveLabel:SetPoint("TOPLEFT", CX, -52)
-  mainFrame.extActiveLabel:SetWidth(CTW)
+  mainFrame.extActiveLabel:SetWidth(CTW - 140)
   mainFrame.extActiveLabel:SetJustifyH("LEFT")
+  mainFrame.extActiveLabel:SetWordWrap(false)
   mainFrame.extActiveLabel:SetText("|cFFFFD700Extensions|r")
+
+  -- Recap global : total de factions au max toutes extensions confondues
+  mainFrame.globalSummary = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+  mainFrame.globalSummary:SetPoint("TOPRIGHT", -16, -53)
+  mainFrame.globalSummary:SetJustifyH("RIGHT")
+  mainFrame.globalSummary:SetText("")
 
 
   -- ================================================================
@@ -1223,35 +1205,6 @@ local function BuildUI()
   mainFrame.scrollBg = scrollBg
 
   -- ================================================================
-  -- HELPER : détecte si toutes les factions d'une extension sont max
-  -- ================================================================
-  local function IsExtensionMaxed(extKey)
-    local extD = RenTrackerData and RenTrackerData[extKey]
-    if not extD or not extD.factions or #extD.factions == 0 then return false end
-    for _, fac in ipairs(extD.factions) do
-      if not fac.id then return false end
-      local isMax = false
-      if extD.system == "renown" then
-        if C_MajorFactions and C_MajorFactions.GetMajorFactionData then
-          local ok, d = pcall(C_MajorFactions.GetMajorFactionData, fac.id)
-          if ok and d then
-            isMax = (d.renownLevel or 0) >= (extD.renownCap or 20)
-          end
-        end
-      else
-        if C_Reputation and C_Reputation.GetFactionDataByID then
-          local ok, d = pcall(C_Reputation.GetFactionDataByID, fac.id)
-          if ok and d then
-            isMax = (d.reaction or 0) >= 8
-          end
-        end
-      end
-      if not isMax then return false end
-    end
-    return true
-  end
-
-  -- ================================================================
   -- REFRESH CONTENT
   -- ================================================================
   mainFrame.RefreshContent = function(self)
@@ -1266,7 +1219,8 @@ local function BuildUI()
       math.floor(extCol.r*255), math.floor(extCol.g*255), math.floor(extCol.b*255),
       extFull))
 
-    -- Highlight extension active + compteurs
+    -- Highlight extension active + compteurs (+ accumulation du recap global)
+    local gDone, gTotal = 0, 0
     for _, eb in ipairs(self.extBtns or {}) do
       local col = eb.col or {r=0.5,g=0.5,b=0.5}
       if eb.extKey == RenTrackerDB.extension then
@@ -1280,6 +1234,8 @@ local function BuildUI()
       end
       if eb.cntLbl then
         local d, t = GetExtRepCounts(eb.extKey)
+        gDone  = gDone  + d
+        gTotal = gTotal + t
         if t > 0 then
           if d >= t then
             eb.cntLbl:SetText(string.format("|cFFFFD700%d/%d|r", d, t))
@@ -1290,6 +1246,23 @@ local function BuildUI()
           end
         end
       end
+    end
+
+    -- Recap global : total de factions au max, + hauts faits de l'ext active
+    if self.globalSummary then
+      local summary = string.format("|cFF888888Global :|r |cFFFFD700%d|r|cFF666666/%d au max|r", gDone, gTotal)
+      if RenTrackerAchievements and RenTrackerAchievements[extKey]
+         and RenTrackerAchievements[extKey].achievements then
+        local aDone, aTot = 0, 0
+        for _, a in ipairs(RenTrackerAchievements[extKey].achievements) do
+          aTot = aTot + 1
+          if IsAchievementDone(a.id) then aDone = aDone + 1 end
+        end
+        if aTot > 0 then
+          summary = summary .. string.format("   |cFF888888HF :|r |cFFFFD700%d|r|cFF666666/%d|r", aDone, aTot)
+        end
+      end
+      self.globalSummary:SetText(summary)
     end
 
     -- Reconstruire les groupes pliables
@@ -1928,11 +1901,83 @@ function RenTracker_Toggle()
 end
 
 -- ================================================================
+-- PANNEAU D'OPTIONS
+-- Cases a cocher persistees dans RenTrackerDB.options.
+-- Accessible via /rt config ou le bouton "Options" de la fenetre.
+-- ================================================================
+local optFrame
+
+local function BuildOptionsPanel()
+  optFrame = CreateFrame("Frame", "RNTOptionsFrame", UIParent, "BackdropTemplate")
+  optFrame:SetSize(360, 200)
+  optFrame:SetPoint("CENTER")
+  optFrame:SetFrameStrata("DIALOG")
+  optFrame:SetToplevel(true)
+  optFrame:EnableMouse(true)
+  optFrame:SetMovable(true)
+  optFrame:RegisterForDrag("LeftButton")
+  optFrame:SetScript("OnDragStart", optFrame.StartMoving)
+  optFrame:SetScript("OnDragStop", optFrame.StopMovingOrSizing)
+  optFrame:SetBackdrop({
+    bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
+    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+    tile=true, tileSize=32, edgeSize=32,
+    insets={left=11, right=12, top=12, bottom=11},
+  })
+  optFrame:SetBackdropColor(0.04, 0.02, 0.06, 0.97)
+  optFrame:SetBackdropBorderColor(0.72, 0.60, 0.28, 1.0)
+
+  local title = optFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  title:SetPoint("TOP", 0, -16)
+  title:SetText("|cFFFFD700RenTracker|r  |cFF888888Options|r")
+
+  local close = CreateFrame("Button", nil, optFrame, "UIPanelCloseButton")
+  close:SetPoint("TOPRIGHT", -6, -6)
+
+  EnsureDB()
+
+  -- Case a cocher + label independant du template (rendu fiable multi-versions)
+  local function AddCheck(y, label, key)
+    local cb = CreateFrame("CheckButton", nil, optFrame, "UICheckButtonTemplate")
+    cb:SetPoint("TOPLEFT", 24, y)
+    cb:SetSize(26, 26)
+    cb:SetChecked(RenTrackerDB.options[key] and true or false)
+    local fs = optFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    fs:SetPoint("LEFT", cb, "RIGHT", 4, 0)
+    fs:SetText(label)
+    cb:SetScript("OnClick", function(s)
+      RenTrackerDB.options[key] = s:GetChecked() and true or false
+    end)
+    return cb
+  end
+
+  AddCheck(-48,  "Suivi automatique par zone",           "autoTrack")
+  AddCheck(-80,  "Message de connexion dans le chat",    "loginMsg")
+  AddCheck(-112, "Son au passage de niveau de Renown",   "sound")
+
+  local hint = optFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+  hint:SetPoint("BOTTOM", 0, 18)
+  hint:SetText("|cFF888888/rt config pour rouvrir ce panneau|r")
+
+  optFrame:Hide()
+end
+
+-- Global : reference par le bouton "Options" de la fenetre (lookup a l'appel)
+function RenTracker_ToggleOptions()
+  if not optFrame then BuildOptionsPanel() end
+  if optFrame:IsShown() then optFrame:Hide() else optFrame:Show() end
+end
+
+-- ================================================================
 -- COMMANDES SLASH
 -- ================================================================
-SLASH_RENTRACKER1 = "/trt"
-SLASH_RENTRACKER2 = "/tibirep"
-SlashCmdList["RENTRACKER"] = function()
+SLASH_RENTRACKER1 = "/rt"
+SlashCmdList["RENTRACKER"] = function(msg)
+  msg = (msg or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
+  if msg == "config" or msg == "options" or msg == "option" then
+    RenTracker_ToggleOptions()
+    return
+  end
   if mainFrame:IsShown() then
     mainFrame:Hide()
     RenTrackerDB.open = false
@@ -1966,6 +2011,7 @@ evFrame:SetScript("OnEvent", function(_, event, arg1)
 
   elseif event == "ADDON_LOADED" and arg1 == ADDON then
 
+    EnsureDB()  -- garantit options + sous-tables meme pour un profil ancien
     BuildUI()
     BuildMinimapButton()
 
@@ -1983,18 +2029,26 @@ evFrame:SetScript("OnEvent", function(_, event, arg1)
     RenTrackerDB.open = false  -- ferme automatiquement au login
 
   elseif event == "PLAYER_LOGIN" then
-    print("|cFF4D99FFRenTracker|r v3.0 chargé -- tapez |cFFFFD700/trt|r pour ouvrir.")
-    -- Suivi auto au login
+    if not (RenTrackerDB.options and RenTrackerDB.options.loginMsg == false) then
+      print("|cFF4D99FFRenTracker|r v3.0 chargé -- tapez |cFFFFD700/rt|r pour ouvrir.")
+    end
+    -- Suivi auto au login (AutoTrackFactionByZone respecte l'option autoTrack)
     C_Timer.After(2, AutoTrackFactionByZone)
 
   elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_NEW_AREA" or event == "ZONE_CHANGED_INDOORS" then
     AutoTrackFactionByZone()
 
-  elseif event == "MAJOR_FACTION_RENOWN_LEVEL_CHANGED" or event == "UPDATE_FACTION"
-      or event == "QUEST_TURNED_IN" or event == "QUEST_LOG_UPDATE" then
-    if mainFrame and mainFrame:IsShown() and mainFrame.RefreshContent then
-      mainFrame:RefreshContent()
+  elseif event == "MAJOR_FACTION_RENOWN_LEVEL_CHANGED" then
+    -- Son optionnel au passage de niveau de Renown
+    if RenTrackerDB.options and RenTrackerDB.options.sound then
+      local snd = (SOUNDKIT and SOUNDKIT.UI_MAJOR_FACTION_RENOWN_LEVEL_UP) or 172586
+      if PlaySound then pcall(PlaySound, snd) end
     end
+    ScheduleRefresh()
+
+  elseif event == "UPDATE_FACTION" or event == "QUEST_TURNED_IN"
+      or event == "QUEST_LOG_UPDATE" then
+    ScheduleRefresh()
   end
 
 end)
