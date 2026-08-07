@@ -191,5 +191,50 @@ RenTrackerData["Midnight"] = {
           tip="Quetes du monde et Missions Speciales dans Voidstorm." },
       },
     },
+    -- ----------------------------------------------------------------
+    -- Forces de Zul'Jarra (Zul'Jarra's Forces) - Ile lovee (Coiled Isle)
+    -- Ajoutee par le patch 12.1 "La malediction d'Ula'tek" (Midnight S2).
+    -- /!\ DONNEES PROVISOIRES : l'ID de faction, les questID, coords, mapID
+    --     et gains de rep exacts sont A CONFIRMER en jeu / via datamining.
+    --     Confirme : Renom 20, achat en "Voidlight Marl" chez Jan'sari the
+    --     Watchful, titre "Hash'ura of Zul'Jarra" au Renom 20.
+    -- ----------------------------------------------------------------
+    {
+      id       = nil,   -- << ID a renseigner (sinon la mini-barre affiche "?")
+      category = "secondaire",
+      name     = "Forces de Zul'Jarra",
+      zone     = "Ile lovee (Coiled Isle)",
+      qm_name  = "Jan'sari the Watchful",
+      qm_coord = "?",
+      qm_zone  = "Ile lovee",
+      color    = {r=0.42, g=0.32, b=0.75},
+      quests   = {
+        { name="Campagne : Ile lovee (Unique)",
+          npc="A confirmer", coords="?",
+          zone="Ile lovee",
+          rep=0, type="onetime", questID=nil, mapID=nil,
+          tip="Campagne principale du patch 12.1. Gain de rep a confirmer en jeu." },
+        { name="Curse Surges - elites rares (Quotidien)",
+          npc="Elites rares", coords="?",
+          zone="Ile lovee",
+          rep=0, type="daily", questID=nil, mapID=nil,
+          tip="Tuer les elites rares pendant les Curse Surges debloque des zones et la Peche maudite. Gain de rep a confirmer." },
+        { name="Evenements publics (Quotidien)",
+          npc="Evenements de zone", coords="?",
+          zone="Ile lovee",
+          rep=0, type="daily", questID=nil, mapID=nil,
+          tip="Evenements publics de l'Ile lovee. Gain de rep a confirmer." },
+        { name="Vaults of Atal'Utek (Hebdo)",
+          npc="A confirmer", coords="?",
+          zone="Ile lovee",
+          rep=0, type="weekly", questID=nil, mapID=nil,
+          tip="Activite recurrente de la zone. Gain de rep a confirmer." },
+        { name="Peche maudite - equipage de Tokka (Quotidien)",
+          npc="Capitaine Tokka", coords="?",
+          zone="Ile lovee",
+          rep=0, type="daily", questID=nil, mapID=nil,
+          tip="La Peche maudite donne de la rep a l'equipage de Tokka (reputation distincte des Forces de Zul'Jarra). Debloquee via les Curse Surges." },
+      },
+    },
   },
 }

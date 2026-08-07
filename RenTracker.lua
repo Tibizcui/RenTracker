@@ -598,6 +598,16 @@ local function BuildUI()
   byLine:SetPoint("TOP", titleStr, "BOTTOM", 0, 0)
   byLine:SetText("|cFFF58CBAby Tibiscui|r")
 
+  -- TibiSuite : en-tête comme WeeklyCompass (titre à l'intérieur, haut-gauche)
+  logoLeft:Hide(); logoRight:Hide()
+  byLine:Hide()
+  titleBg:Hide()
+  titleStr:SetParent(mainFrame)
+  titleStr:SetFontObject("GameFontNormalLarge")
+  titleStr:ClearAllPoints()
+  titleStr:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 16, -14)
+  titleStr:SetText("|cFFDDA669RenTracker|r")
+
   local closeBtn = CreateFrame("Button", nil, mainFrame, "UIPanelCloseButton")
   closeBtn:SetPoint("TOPRIGHT", -5, -5)
   closeBtn:SetScript("OnClick", function()
@@ -1688,7 +1698,9 @@ local function BuildUI()
     local questYabs     = math.abs(baseY) + 18 + 18 + 34 + 52
     local contentNeeded = questYabs + 38 + questH + 20
     local newH = math.max(colH, contentNeeded, 450)
-    newH = math.min(newH, 980)
+    -- Ajuste la hauteur max a l'ecran disponible (evite de deborder haut/bas)
+    local screenH = (UIParent and UIParent.GetHeight and UIParent:GetHeight()) or 900
+    newH = math.min(newH, math.max(450, screenH - 80))
     mainFrame:SetHeight(newH)
   end -- RefreshContent
 
