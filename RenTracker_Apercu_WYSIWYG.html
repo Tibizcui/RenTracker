@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RenTracker - Aperçu WYSIWYG</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1d2129;
+    --text:#dfe3ea; --muted:#9aa3b2; --line:#2a2f3a;
+    --gold:#DDA669; --purple:#9480FF; --accent:#4D99FF;
+    --green:#4fbf6a;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6; padding:32px 16px;
+  }
+  .wrap{max-width:860px; margin:0 auto}
+  .switcher{display:flex; gap:8px; margin-bottom:24px; justify-content:center}
+  .switcher button{
+    background:var(--card2); color:var(--text); border:1px solid var(--line);
+    padding:8px 18px; border-radius:999px; cursor:pointer; font-size:14px;
+  }
+  .switcher button.active{background:var(--gold); color:#1a1200; border-color:var(--gold); font-weight:600}
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:28px 30px; margin-bottom:22px; box-shadow:0 6px 20px rgba(0,0,0,.35);
+  }
+  h1.title{
+    font-size:28px; margin:0 0 4px; color:var(--gold); letter-spacing:.3px;
+  }
+  .sub{color:var(--muted); font-size:14px; margin-bottom:18px}
+  h2{
+    font-size:19px; margin:26px 0 10px; color:#fff;
+    border-left:3px solid var(--gold); padding-left:10px;
+  }
+  p{margin:12px 0}
+  ul.feat{list-style:none; padding:0; margin:8px 0}
+  ul.feat li{
+    padding:10px 12px 10px 38px; position:relative; margin:6px 0;
+    background:var(--card2); border:1px solid var(--line); border-radius:10px;
+  }
+  ul.feat li::before{
+    content:"★"; position:absolute; left:12px; top:10px; color:var(--gold);
+  }
+  ul.feat li b{color:#fff}
+  .cmd{
+    font-family:"Cascadia Code",Consolas,monospace; background:#0c0e12;
+    color:var(--accent); padding:2px 7px; border-radius:6px; border:1px solid var(--line);
+  }
+  .rank-legend{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0}
+  .rank{padding:3px 10px; border-radius:6px; font-size:12px; font-weight:600; color:#111}
+  .exalte{background:#ff8000} .revere{background:#a635ff; color:#fff}
+  .honore{background:#4d99ff} .aimable{background:#4fbf6a}
+  .neutre{background:#e8e8e8}
+  .note{
+    background:rgba(148,128,255,.08); border:1px solid rgba(148,128,255,.4);
+    border-radius:10px; padding:12px 16px; color:var(--muted); font-size:13px;
+  }
+  .lang{display:none}
+  .lang.show{display:block}
+  .foot{color:var(--muted); font-size:13px; text-align:center; margin-top:8px}
+  .barwrap{height:9px; background:#0c0e12; border-radius:6px; overflow:hidden; margin-top:6px; border:1px solid var(--line)}
+  .bar{height:100%}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="switcher">
+    <button id="btn-fr" class="active" onclick="show('fr')">Français</button>
+    <button id="btn-en" onclick="show('en')">English</button>
+  </div>
+
+  <!-- ================= FRANCAIS ================= -->
+  <div class="lang show" id="fr">
+    <div class="card">
+      <h1 class="title">RenTracker - Votre réputation, enfin sous contrôle</h1>
+      <div class="sub">Suivi de réputation multi-extensions | De Vanilla à Midnight | par Tibiscui (Kirin Tor)</div>
+
+      <p>RenTracker rassemble toutes vos réputations, de Vanilla à Midnight, dans une seule fenêtre claire et pliable. Fini les allers-retours dans le panneau de réputation par défaut : vous voyez d'un coup d'œil où vous en êtes, ce qu'il reste à faire cette semaine, et où aller pour gagner de la réput.</p>
+
+      <h2>Ce que fait RenTracker</h2>
+      <ul class="feat">
+        <li><b>13 extensions couvertes</b> - de Vanilla jusqu'à Midnight, chaque faction est classée par extension et par catégorie (Principales, Secondaires, PvP).</li>
+        <li><b>Groupes pliables</b> - dépliez seulement ce qui vous intéresse. L'interface reste compacte.</li>
+        <li><b>Mini-barres de progression</b> - la progression de chaque faction en un coup d'œil, avec des couleurs de rang façon qualité d'objet.
+          <div class="rank-legend">
+            <span class="rank neutre">Neutre</span>
+            <span class="rank aimable">Aimable</span>
+            <span class="rank honore">Honoré</span>
+            <span class="rank revere">Révéré</span>
+            <span class="rank exalte">Exalté</span>
+          </div>
+          <div class="barwrap"><div class="bar" style="width:72%;background:#4d99ff"></div></div>
+        </li>
+        <li><b>Renown et Paragon</b> - support complet des systèmes modernes de renom, avec le bon plafond par extension.</li>
+        <li><b>Suivi des quêtes</b> - quêtes hebdomadaires, uniques et quotidiennes listées par faction, avec le PNJ, la zone et les coordonnées exactes.</li>
+        <li><b>Suivi automatique par zone</b> - RenTracker met en avant la faction de la zone où vous vous trouvez. Activable ou désactivable.</li>
+        <li><b>Hauts faits de réputation</b> - statut de complétion affiché directement.</li>
+        <li><b>Recherche intégrée</b> - trouvez une faction ou une quête en tapant son nom.</li>
+        <li><b>Bouton minimap</b> et intégration à la barre TibiSuite si vous l'utilisez.</li>
+      </ul>
+
+      <h2>Utilisation</h2>
+      <p><span class="cmd">/rt</span> ouvre ou ferme la fenêtre principale.<br>
+      <span class="cmd">/rt config</span> ouvre les options (suivi auto, message de connexion, son de notification).<br>
+      Ou cliquez simplement sur le bouton minimap.</p>
+
+      <h2>Léger et non intrusif</h2>
+      <p>RenTracker regroupe les rafraîchissements pour éviter les micro-freezes, se ferme automatiquement à la connexion, et retient la position de sa fenêtre. Aucune configuration obligatoire : installez, tapez <span class="cmd">/rt</span>, c'est prêt.</p>
+
+      <h2>Retours et suggestions</h2>
+      <p>Un bug, une faction manquante, une idée ? Laissez un commentaire ou ouvrez un ticket. Le projet évolue au fil des patchs.</p>
+
+      <div class="foot">Auteur : Tibiscui - Kirin Tor</div>
+    </div>
+  </div>
+
+  <!-- ================= ENGLISH ================= -->
+  <div class="lang" id="en">
+    <div class="card">
+      <h1 class="title">RenTracker - All your reputations, finally under control</h1>
+      <div class="sub">Multi-expansion reputation tracker | From Vanilla to Midnight | by Tibiscui (Kirin Tor)</div>
+
+      <p>RenTracker gathers every reputation from Vanilla to Midnight into a single, clean, collapsible window. No more digging through the default reputation panel: see at a glance where you stand, what's left to do this week, and where to go to earn rep.</p>
+
+      <h2>What RenTracker does</h2>
+      <ul class="feat">
+        <li><b>13 expansions covered</b> - from Vanilla to Midnight, each faction sorted by expansion and category (Main, Secondary, PvP).</li>
+        <li><b>Collapsible groups</b> - expand only what matters to you. The UI stays compact.</li>
+        <li><b>Mini progress bars</b> - every faction's progress at a glance, with item-quality-style rank colors.
+          <div class="rank-legend">
+            <span class="rank neutre">Neutral</span>
+            <span class="rank aimable">Friendly</span>
+            <span class="rank honore">Honored</span>
+            <span class="rank revere">Revered</span>
+            <span class="rank exalte">Exalted</span>
+          </div>
+          <div class="barwrap"><div class="bar" style="width:72%;background:#4d99ff"></div></div>
+        </li>
+        <li><b>Renown and Paragon</b> - full support for modern renown systems, with the correct cap per expansion.</li>
+        <li><b>Quest tracking</b> - weekly, one-time and daily quests listed per faction, with the NPC, zone and exact coordinates.</li>
+        <li><b>Automatic zone tracking</b> - RenTracker highlights the faction for the zone you're in. Can be toggled on or off.</li>
+        <li><b>Reputation achievements</b> - completion status shown inline.</li>
+        <li><b>Built-in search</b> - find a faction or a quest by typing its name.</li>
+        <li><b>Minimap button</b> and TibiSuite bar integration if you use it.</li>
+      </ul>
+
+      <h2>How to use</h2>
+      <p><span class="cmd">/rt</span> toggles the main window.<br>
+      <span class="cmd">/rt config</span> opens the options (auto-tracking, login message, notification sound).<br>
+      Or just click the minimap button.</p>
+
+      <h2>Lightweight and unobtrusive</h2>
+      <p>RenTracker batches refreshes to avoid micro-freezes, auto-closes on login, and remembers its window position. No mandatory setup: install it, type <span class="cmd">/rt</span>, done.</p>
+
+      <h2>Feedback and suggestions</h2>
+      <p>Found a bug, a missing faction, or have an idea? Leave a comment or open a ticket. The project evolves patch after patch.</p>
+
+      <div class="foot">Author: Tibiscui - Kirin Tor</div>
+    </div>
+  </div>
+
+  <div class="note">
+    Aperçu WYSIWYG (rendu visuel indicatif). CurseForge n'applique pas exactement ce thème, mais la structure, les titres, les listes et la mise en valeur correspondent à ce que verront les joueurs. Le contenu texte est identique à celui du BBCode fourni dans la fiche.
+  </div>
+
+</div>
+
+<script>
+function show(l){
+  document.getElementById('fr').classList.toggle('show', l==='fr');
+  document.getElementById('en').classList.toggle('show', l==='en');
+  document.getElementById('btn-fr').classList.toggle('active', l==='fr');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+}
+</script>
+</body>
+</html>

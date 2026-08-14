@@ -192,48 +192,114 @@ RenTrackerData["Midnight"] = {
       },
     },
     -- ----------------------------------------------------------------
-    -- Forces de Zul'Jarra (Zul'Jarra's Forces) - Ile lovee (Coiled Isle)
-    -- Ajoutee par le patch 12.1 "La malediction d'Ula'tek" (Midnight S2).
-    -- /!\ DONNEES PROVISOIRES : l'ID de faction, les questID, coords, mapID
-    --     et gains de rep exacts sont A CONFIRMER en jeu / via datamining.
-    --     Confirme : Renom 20, achat en "Voidlight Marl" chez Jan'sari the
-    --     Watchful, titre "Hash'ura of Zul'Jarra" au Renom 20.
+    -- Forces de Zul'Jarra (Zul'jarra's Forces) - Ile lovee (Coiled Isle)
+    -- Ajoutee par le patch 12.1 "La malediction d'Ula'tek" (Midnight S2,
+    -- sortie le 11/08/2026). Faction de Renom principale du patch (Renom 20).
+    -- ID de faction 2772 confirme (Wowhead). uiMapID de l'Ile lovee : 2512.
+    -- Quartier-maitre : Jan'sari the Watchful (PNJ 268228), au nord de
+    -- Tokka's Landing ; achats en "Voidlight Marl". Titre au Renom 20 :
+    -- "Hash'ura of Zul'jarra".
+    -- /!\ Les questID exacts et certains montants de rep restent a confirmer
+    --     en jeu ; les valeurs suivent le schema des autres factions Midnight.
     -- ----------------------------------------------------------------
     {
-      id       = nil,   -- << ID a renseigner (sinon la mini-barre affiche "?")
+      id       = 2772,
       category = "secondaire",
       name     = "Forces de Zul'Jarra",
       zone     = "Ile lovee (Coiled Isle)",
       qm_name  = "Jan'sari the Watchful",
-      qm_coord = "?",
-      qm_zone  = "Ile lovee",
+      qm_coord = "51.4, 47.9",
+      qm_zone  = "Tokka's Landing (nord), Ile lovee",
       color    = {r=0.42, g=0.32, b=0.75},
       quests   = {
-        { name="Campagne : Ile lovee (Unique)",
-          npc="A confirmer", coords="?",
+        { name="Quetes hebdomadaires de l'Ile lovee (Hebdo)",
+          npc="Emissaires de Zul'jarra", coords="Tokka's Landing",
           zone="Ile lovee",
-          rep=0, type="onetime", questID=nil, mapID=nil,
-          tip="Campagne principale du patch 12.1. Gain de rep a confirmer en jeu." },
-        { name="Curse Surges - elites rares (Quotidien)",
-          npc="Elites rares", coords="?",
+          rep=1500, type="weekly", questID=nil, mapID=2512,
+          tip="Plus gros bloc de rep de la semaine. Activez le Contrat : Forces de Zul'jarra AVANT de les faire." },
+        { name="Quete de donjon hebdomadaire (Hebdo)",
+          npc="Halduron Luisaile", coords="Lune-d'Argent (50.4, 38.2)",
+          zone="Lune-d'Argent",
+          rep=1500, type="weekly", questID=nil, mapID=2372,
+          tip="Terminez un donjon Midnight (difficulte libre, meme Donjon Compagnon)." },
+        { name="Campagne : La malediction d'Ula'tek (Unique)",
+          npc="Zul'jarra", coords="Tokka's Landing",
           zone="Ile lovee",
-          rep=0, type="daily", questID=nil, mapID=nil,
-          tip="Tuer les elites rares pendant les Curse Surges debloque des zones et la Peche maudite. Gain de rep a confirmer." },
-        { name="Evenements publics (Quotidien)",
-          npc="Evenements de zone", coords="?",
+          rep=5000, type="onetime", questID=nil, mapID=2512,
+          tip="Campagne principale du patch 12.1. Gros bonus de rep, ne se repete pas." },
+        { name="Quetes mondiales & Missions speciales (Quotidien)",
+          npc="Diverses zones", coords="Ile lovee",
           zone="Ile lovee",
-          rep=0, type="daily", questID=nil, mapID=nil,
-          tip="Evenements publics de l'Ile lovee. Gain de rep a confirmer." },
-        { name="Vaults of Atal'Utek (Hebdo)",
-          npc="A confirmer", coords="?",
+          rep=75, type="daily", questID=nil, mapID=2512,
+          tip="Quetes du monde de l'Ile lovee. Boostees par le Contrat : Forces de Zul'jarra (partage Warband)." },
+        { name="Curse Surges - elites rares (Hebdo)",
+          npc="Elites rares", coords="5 zones tournantes",
           zone="Ile lovee",
-          rep=0, type="weekly", questID=nil, mapID=nil,
-          tip="Activite recurrente de la zone. Gain de rep a confirmer." },
-        { name="Peche maudite - equipage de Tokka (Quotidien)",
-          npc="Capitaine Tokka", coords="?",
+          rep=150, type="weekly", questID=nil, mapID=2512,
+          tip="Chaque rare donne de la rep une fois par semaine par personnage. Les Curse Surges debloquent aussi la Peche maudite." },
+        { name="Vaults of Atal'Utek - evenements publics (Quotidien)",
+          npc="Evenements souterrains", coords="Sous l'Ile lovee",
           zone="Ile lovee",
-          rep=0, type="daily", questID=nil, mapID=nil,
-          tip="La Peche maudite donne de la rep a l'equipage de Tokka (reputation distincte des Forces de Zul'Jarra). Debloquee via les Curse Surges." },
+          rep=100, type="daily", questID=nil, mapID=2512,
+          tip="Zone d'evenements publics souterraine culminant sur un boss selon la participation." },
+        { name="Coffres de Delve Bountiful (Hebdo)",
+          npc="Coffres de Delve", coords="Delves de l'Ile lovee",
+          zone="Ile lovee",
+          rep=500, type="weekly", questID=nil, mapID=nil,
+          tip="Ouvrir les coffres Bountiful (Ring of Glory, Gnarldor Isle...) alimente aussi la barre." },
+      },
+    },
+    -- ----------------------------------------------------------------
+    -- Capitaine Tokka (Captain Tokka) - Ile lovee (Coiled Isle)
+    -- Nouvelle reputation "amitie" axee PECHE, ajoutee par le patch 12.1.
+    -- ID de faction 2773 confirme (Wowhead). uiMapID de l'Ile lovee : 2512.
+    -- /!\ PARTICULARITE : ce n'est PAS une faction de Renom. Elle suit 5 rangs
+    --     personnalises (Stranger -> Doomed Sailor -> Cursed Angler ->
+    --     Venom Trawler -> Bloodsworn Crew), pas Neutre->Exalte ni Renom 1-20.
+    --     Le moteur actuel de RenTracker gere le systeme "renown" au niveau de
+    --     l'extension : cette barre s'affichera donc via le fallback renown
+    --     tant que le moteur ne gere pas les reputations d'amitie. Champs
+    --     "friendship" et "ranks" ajoutes pour une prise en charge future.
+    -- Quartier-maitre : Second Mate Sluggs, a Tokka's Folly (ile a l'ouest de
+    -- Tokka's Landing) ; achats en Voidlight Marl et Coiled Filament.
+    -- ----------------------------------------------------------------
+    {
+      id         = 2773,
+      category   = "secondaire",
+      name       = "Capitaine Tokka",
+      zone       = "Ile lovee (Coiled Isle)",
+      friendship = true,
+      ranks      = { "Stranger", "Doomed Sailor", "Cursed Angler", "Venom Trawler", "Bloodsworn Crew" },
+      qm_name    = "Second Mate Sluggs",
+      qm_coord   = "51.65, 49.79",
+      qm_zone    = "Tokka's Folly, Ile lovee",
+      color      = {r=0.20, g=0.70, b=0.55},
+      quests     = {
+        { name="Peche empoisonnee : la preuve est dans la vase (Deblocage)",
+          npc="Capitaine Tokka", coords="Tokka's Landing",
+          zone="Ile lovee",
+          rep=0, type="onetime", questID=nil, mapID=2512,
+          tip="Quete d'introduction 'Venom Fishing: Proof is in the Ooze' : debloque la reputation et la Peche maudite." },
+        { name="Chaine de quetes de Tokka (Unique)",
+          npc="Capitaine Tokka", coords="Tokka's Landing",
+          zone="Ile lovee",
+          rep=0, type="onetime", questID=nil, mapID=2512,
+          tip="Suivez la chaine jusqu'a 'Venom Fishing: Maximum Potency'. Fait l'essentiel de la rep jusqu'a Bloodsworn Crew." },
+        { name="Quotidiennes de l'equipage (Quotidien)",
+          npc="Equipage de Tokka", coords="Tokka's Folly (ouest)",
+          zone="Ile lovee",
+          rep=0, type="daily", questID=nil, mapID=2512,
+          tip="Quotidiennes de l'equipage a Tokka's Folly, l'ile juste a l'ouest de Tokka's Landing." },
+        { name="Peche maudite - poissons speciaux (Quotidien)",
+          npc="Bancs de peche", coords="Eaux de l'Ile lovee",
+          zone="Ile lovee",
+          rep=0, type="daily", questID=nil, mapID=2512,
+          tip="Pechez les poissons et objets de quete (haut fait 'Treasures of the Damned'). Debloque via les Curse Surges." },
+        { name="Quete mondiale : Peche en haute mer (Quotidien)",
+          npc="Quete mondiale", coords="Ile lovee",
+          zone="Ile lovee",
+          rep=0, type="daily", questID=nil, mapID=2512,
+          tip="Faites la quete mondiale 'Open Sea Fishing' des qu'elle apparait." },
       },
     },
   },
